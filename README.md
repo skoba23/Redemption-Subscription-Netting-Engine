@@ -62,6 +62,16 @@ trade-optimizer-service/
                             └── KnapsackOptimizerTest.java
 ```
 ## Running Instructions
-1.Starting Database
-bash
+**1.Starting Database**
+```
 docker compose up -d
+```
+**2.Run the application**
+```
+mvn spring-boot:run
+```
+**3.Run the tests**
+```
+mvn test
+```
+
