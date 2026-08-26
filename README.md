@@ -1,5 +1,5 @@
 # Redemption - Subscription Netting Engine
-A Spring Boot REST Service that selects the best combination of trades, maximizing total expected P&L without exceeding the available margin.
+A Spring Boot REST Service that selects the best combination of trades, maximizing total expected P&L without exceeding the available margin. This is a classis Knapsack problem: each trade's *marginRequired* is the "Weight", *expectedPnl* is "Value" and *maxMargin* is "capacity".
 
 ## Repository Structure
 ```
@@ -61,3 +61,7 @@ trade-optimizer-service/
                         └── algorithm/
                             └── KnapsackOptimizerTest.java
 ```
+## Running Instructions
+1.Starting Database
+bash
+docker compose up -d
