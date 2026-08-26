@@ -254,9 +254,11 @@ Content-Type: application/json
 We have two tables:
 
 `optimization_run` - one row per call. 
+Columns:
 (id, maxMargin, totalMarginRequired, totalExpectedPnl, createdAt)
 
 `submitted_trade` - one row per trade that was in a request, with a selected flag showing whether the optimizer picked it or not. 
+Columns:
 (id, run_id, tradeName, expectedPnl, marginRequired, selected)
 
 Each `submitted_trade` links to its `optimization_run` with *run_id*
