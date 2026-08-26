@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: trade-optimizer-db
+    environment:
+      POSTGRES_DB: tradeoptimizer
+      POSTGRES_USER: tradeoptimizer
+      POSTGRES_PASSWORD: tradeoptimizer
+    ports:
+      - "5432:5432"
+    volumes:
+      - trade-optimizer-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tradeoptimizer -d tradeoptimizer"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  trade-optimizer-data:
