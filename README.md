@@ -67,11 +67,13 @@ trade-optimizer-service/
 docker compose up -d
 ```
 `trade-optimizer-db` status should be healthy
+
 **2.Run the application**
 ```
 mvn spring-boot:run
 ```
 app listens on port 8081
+
 **3.Run the tests**
 ```
 mvn test
@@ -81,3 +83,4 @@ this runs 'KnapsackOptimizerTest' which is test of a Logic. I ran it and it manu
 ## Database Setup
 Setup was handled by `docked-compose.yml`.
 database, name and password was tradeoptimizer, matching with `application.yml`.
+On application startup, Flyway automatically applies the migrations in `src/main/resources/db/migration/` to create the schema.
