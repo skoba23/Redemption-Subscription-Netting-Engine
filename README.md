@@ -171,7 +171,7 @@ Content-Type: application/json
 
 ### `GET /api/v1/trades/{requestId}`
 
-Returns result for the given requestId
+Returns the persisted optimization result for a given requestId.
 
 - Returns **200 OK** if found.
 - Returns **404 Not Found** if no run exists for that ID.
