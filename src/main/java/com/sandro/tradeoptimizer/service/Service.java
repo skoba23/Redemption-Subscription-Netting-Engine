@@ -27,6 +27,7 @@ public class Service {
 
     private final OptimizationRunRepository runRepository;
     private final KnapsackOptimizer optimizer;
+    private final OptimizationRun optimizationRun;
 
     public Service(OptimizationRunRepository runRepository, KnapsackOptimizer optimizer){
         this.runRepository = runRepository;
@@ -42,17 +43,31 @@ public class Service {
                 .collect(Collectors.toUnmodifiableList());
         KnapsackResult result = optimizer.optimize(candidateList, request.getMaxMargin());
 
-        Set<TradeCandidate> selected = new HashSet<>(result.getSelectedTrades());
+        //Set<TradeCandidate> selected = new HashSet<>(result.getSelectedTrades());
 
         OptimizationRun run = new OptimizationRun(
                 request.getMaxMargin(),
                 result.getTotalMarginRequired(),
                 result.getTotalExpectedPnl()
         );
+        BigDecimal newMaxMargin = request.getMaxMargin() - result.getTotalMarginRequired();
 
+        List<TradeCandidate> listOfNotSelected;
+        List<SubmittedTrade> tradesTemp = optimizationRun.getTrades();
+        for(int i = 0; i < tradesTemp.size(); i++){
+            if(!tradesTemp.get(i).isSelected()){
+                listOfNotSelected.add(tradesTemp.get(i));
+            }
+        }
+        KnapsackResult result1 = optimizer.optimize(listOfNotSelected, newMaxMargin);
+        List<TradeCandidate> tmp = result1.getSelectedTrades();
+        for(int i = 0; i < result.getSelectedTrades().size(); i++){
+            tmp.add(result.getSelectedTrades().get(i));
+        }
+        Set<TradeCandidate> allSelected = new HashSet<>(tmp);
         for(int i = 0; i < tradeDtoList.size(); i++){
             TradeDto trade = tradeDtoList.get(i);
-            boolean wasSelected = selected.contains(candidateList.get(i));
+            boolean wasSelected = allSelected.contains(candidateList.get(i));
             run.addTrade(new SubmittedTrade(trade.getTradeName(), trade.getExpectedPnl(),
                     trade.getMarginRequired(), wasSelected));
         }
