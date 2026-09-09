@@ -16,10 +16,9 @@ import org.springframework.data.domain.Page;
 
 import javax.management.RuntimeErrorException;
 import org.springframework.data.domain.Pageable;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
@@ -27,7 +26,6 @@ public class Service {
 
     private final OptimizationRunRepository runRepository;
     private final KnapsackOptimizer optimizer;
-    private final OptimizationRun optimizationRun;
 
     public Service(OptimizationRunRepository runRepository, KnapsackOptimizer optimizer){
         this.runRepository = runRepository;
@@ -50,17 +48,23 @@ public class Service {
                 result.getTotalMarginRequired(),
                 result.getTotalExpectedPnl()
         );
-        BigDecimal newMaxMargin = request.getMaxMargin() - result.getTotalMarginRequired();
+        BigDecimal newMaxMargin = request.getMaxMargin().subtract(result.getTotalMarginRequired());
 
-        List<TradeCandidate> listOfNotSelected;
-        List<SubmittedTrade> tradesTemp = optimizationRun.getTrades();
-        for(int i = 0; i < tradesTemp.size(); i++){
-            if(!tradesTemp.get(i).isSelected()){
-                listOfNotSelected.add(tradesTemp.get(i));
+        List<TradeCandidate> listOfNotSelected = new ArrayList<>();
+        List<TradeCandidate> tradesTemp = result.getSelectedTrades();
+        for(int i = 0; i < candidateList.size(); i++){
+            TradeCandidate candidate = candidateList.get(i);
+            boolean isSelected = false;
+            for(int j = 0; j < tradesTemp.size(); j++){
+                if(tradesTemp.get(j).equals(candidate)){
+                    isSelected = true;
+                    break;
+                }
             }
+            if(!isSelected) listOfNotSelected.add(candidate);
         }
         KnapsackResult result1 = optimizer.optimize(listOfNotSelected, newMaxMargin);
-        List<TradeCandidate> tmp = result1.getSelectedTrades();
+        List<TradeCandidate> tmp = new ArrayList<>(result1.getSelectedTrades());
         for(int i = 0; i < result.getSelectedTrades().size(); i++){
             tmp.add(result.getSelectedTrades().get(i));
         }
